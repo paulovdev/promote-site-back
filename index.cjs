@@ -1,44 +1,32 @@
+// server/server.js
 const express = require('express');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const stripe = require('stripe')('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg'); // Substitua pela sua chave secreta do Stripe
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
 app.use(cors());
 app.use(bodyParser.json());
 
-// Rota para criar a sessão de checkout
-app.post('/api/create-checkout-session', async (req, res) => {
-    try {
-        const session = await stripe.checkout.sessions.create({
-            line_items: [{ price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', quantity: 1 }],
-            mode: 'payment',
-            // Não inclua as URLs de sucesso e cancelamento
-        });
-        res.json({ id: session.id });
-    } catch (error) {
-        console.error('Erro ao criar sessão de checkout:', error);
-        res.status(500).json({ error: 'Erro ao criar sessão de checkout' }); // Retorne um objeto JSON
-    }
+app.post('/create-checkout-session', async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT',
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `${req.headers.origin}/success`,
+      cancel_url: `${req.headers.origin}/cancel`,
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Rota para verificar o status do pagamento (se necessário)
-app.post('/api/check-payment-status', async (req, res) => {
-    const { sessionId } = req.body;
-
-    try {
-        const session = await stripe.checkout.sessions.retrieve(sessionId);
-        const paymentConfirmed = session.payment_status === 'paid';
-
-        res.json({ paymentConfirmed });
-    } catch (error) {
-        console.error('Erro ao verificar o status do pagamento:', error);
-        res.status(500).json({ error: 'Erro ao verificar o status do pagamento' }); // Retorne um objeto JSON
-    }
-});
-
-// Inicia o servidor
-app.listen(3000, () => console.log('Servidor ouvindo na porta 3000'));
-app.get('/', (req, res) => {
-    res.send('Servidor ligado!');
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
