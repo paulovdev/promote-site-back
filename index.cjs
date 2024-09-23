@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post('https://promote-site-back.vercel.app/api/create-checkout-session', async (req, res) => {
+app.post('/api/create-checkout-session', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         line_items: [{ price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', quantity: 1 }],
         mode: 'payment',
