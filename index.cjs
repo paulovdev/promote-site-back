@@ -13,8 +13,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             line_items: [{ price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', quantity: 1 }],
             mode: 'payment',
-            success_url: `${req.headers.origin}/success`,
-            cancel_url: `${req.headers.origin}/cancel`,
+            // Não inclua as URLs de sucesso e cancelamento
         });
         res.json({ id: session.id });
     } catch (error) {
@@ -23,10 +22,19 @@ app.post('/api/create-checkout-session', async (req, res) => {
     }
 });
 
-// Rota para verificar o status do pagamento
+// Rota para verificar o status do pagamento (se necessário)
 app.post('/api/check-payment-status', async (req, res) => {
-    // Aqui você pode implementar a lógica para verificar o status do pagamento
-    res.json({ paymentConfirmed: true }); // Exemplo de resposta
+    const { sessionId } = req.body;
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        const paymentConfirmed = session.payment_status === 'paid';
+
+        res.json({ paymentConfirmed });
+    } catch (error) {
+        console.error('Erro ao verificar o status do pagamento:', error);
+        res.status(500).send('Erro ao verificar o status do pagamento');
+    }
 });
 
 // Inicia o servidor
