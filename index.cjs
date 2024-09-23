@@ -8,13 +8,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/create-checkout-session', async (req, res) => {
-    const session = await stripe.checkout.sessions.create({
-        line_items: [{ price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', quantity: 1 }],
-        mode: 'payment',
-        success_url: `${req.headers.origin}/success`,
-        cancel_url: `${req.headers.origin}/cancel`,
-    });
-    res.json({ id: session.id });
+    try {
+        const session = await stripe.checkout.sessions.create({
+            line_items: [{ price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', quantity: 1 }],
+            mode: 'payment',
+            success_url: `${req.headers.origin}/success`,
+            cancel_url: `${req.headers.origin}/cancel`,
+        });
+        res.json({ id: session.id });
+    } catch (error) {
+        console.error('Erro ao criar sessão de checkout:', error);
+        res.status(500).send('Erro ao criar sessão de checkout');
+    }
 });
 
 app.post('/api/check-payment-status', async (req, res) => {
