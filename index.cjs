@@ -18,7 +18,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
         res.json({ id: session.id });
     } catch (error) {
         console.error('Erro ao criar sessão de checkout:', error);
-        res.status(500).send('Erro ao criar sessão de checkout');
+        res.status(500).json({ error: 'Erro ao criar sessão de checkout' }); // Retorne um objeto JSON
     }
 });
 
@@ -33,7 +33,7 @@ app.post('/api/check-payment-status', async (req, res) => {
         res.json({ paymentConfirmed });
     } catch (error) {
         console.error('Erro ao verificar o status do pagamento:', error);
-        res.status(500).send('Erro ao verificar o status do pagamento');
+        res.status(500).json({ error: 'Erro ao verificar o status do pagamento' }); // Retorne um objeto JSON
     }
 });
 
