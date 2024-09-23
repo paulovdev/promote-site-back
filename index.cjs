@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 const paymentRecords = {}; // Armazenamento em memória para simulação
 
 // Rota para criar a sessão de checkout
-app.post('https://promote-site-back.vercel.app//create-checkout-session', async (req, res) => {
+app.post('https://promote-site-back.vercel.app/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -34,7 +34,7 @@ app.post('https://promote-site-back.vercel.app//create-checkout-session', async 
 });
 
 // Rota do webhook
-app.post('https://promote-site-back.vercel.app//api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+app.post('https://promote-site-back.vercel.app/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // Adicione sua chave de webhook aqui
   let event;
@@ -65,7 +65,7 @@ app.post('https://promote-site-back.vercel.app//api/webhook', express.raw({ type
 });
 
 // Rota para verificar o status do pagamento
-app.get('https://promote-site-back.vercel.app//api/check-payment-status/:sessionId', (req, res) => {
+app.get('https://promote-site-back.vercel.app/api/check-payment-status/:sessionId', (req, res) => {
   const { sessionId } = req.params;
   const paymentStatus = paymentRecords[sessionId] || { paid: false };
   res.json(paymentStatus);
