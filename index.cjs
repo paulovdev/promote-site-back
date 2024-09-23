@@ -30,3 +30,6 @@ app.post('/create-checkout-session', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get('/', (req, res) => {
+    res.send('Servidor ligado!');
+});
