@@ -7,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Rota para criar a sessão de checkout
 app.post('/api/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
@@ -22,10 +23,14 @@ app.post('/api/create-checkout-session', async (req, res) => {
     }
 });
 
+// Rota para verificar o status do pagamento
 app.post('/api/check-payment-status', async (req, res) => {
     // Aqui você pode implementar a lógica para verificar o status do pagamento
-    // Você pode armazenar os dados do pagamento em um banco de dados e consultá-los aqui
     res.json({ paymentConfirmed: true }); // Exemplo de resposta
 });
 
+// Inicia o servidor
 app.listen(3000, () => console.log('Servidor ouvindo na porta 3000'));
+app.get('/', (req, res) => {
+    res.send('Servidor ligado!');
+});
