@@ -10,12 +10,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post('/create-checkout-session', async (req, res) => { // Mudei para uma rota relativa
+app.post('/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
-                price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT',
+                price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', // Certifique-se de que este preço exista no seu Stripe
                 quantity: 1,
             }],
             mode: 'payment',
@@ -29,7 +29,8 @@ app.post('/create-checkout-session', async (req, res) => { // Mudei para uma rot
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 app.get('/', (req, res) => {
     res.send('Servidor ligado!');
 });
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
