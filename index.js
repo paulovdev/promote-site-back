@@ -4,8 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const stripe = require('stripe')('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
-const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy
-';
+const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
 
 const port = 3000
 
