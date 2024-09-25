@@ -2,14 +2,19 @@ const express = require('express');
 const Stripe = require('stripe');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const webhookRoutes = require('./routes/webhook');
+const webhookRoutes = require('./routes/webhook'); // Importa as rotas do webhook
+
 const app = express();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
+// Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // Para lidar com o corpo das requisições JSON
+
+// Usando as rotas do webhook
 app.use('/api', webhookRoutes);
-    
+
+// Endpoint para criar a sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
     try {
         console.log('Received request to create checkout session');
@@ -41,6 +46,6 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 });
 
-
+// Iniciar o servidor
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

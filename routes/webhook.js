@@ -1,23 +1,16 @@
 const express = require('express');
 const Stripe = require('stripe');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-
-const app = express();
+const router = express.Router();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json()); // Este middleware deve vir após a configuração do webhook
-
 // Endpoint do Webhook
-app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
     const sig = req.headers['stripe-signature'];
 
     let event;
 
     try {
-        // Aqui, o req.body é o corpo bruto da requisição
+        // O corpo da requisição deve ser bruto
         event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy'); // Substitua pela sua chave de webhook
     } catch (err) {
         console.log(`Webhook Error: ${err.message}`);
@@ -36,7 +29,4 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     res.json({ received: true });
 });
 
-// Iniciar o servidor
-const PORT = process.env.PORT || 4242;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+module.exports = router; // Exporta as rotas
