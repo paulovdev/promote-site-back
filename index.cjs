@@ -10,11 +10,13 @@ const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p
 // Middleware
 app.use(cors());
 
-// Rota do Webhook deve ser definida antes do middleware express.json()
-app.use('/api', webhookRoutes);
+// Define o middleware para o endpoint do webhook
+app.use('/webhook', express.raw({ type: 'application/json' }));
 
 // Middleware para processar JSON
 app.use(express.json());
+
+app.use('/api', webhookRoutes);
 
 app.post('/create-checkout-session', async (req, res) => {
     try {
