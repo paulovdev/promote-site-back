@@ -31,7 +31,7 @@ app.post('/checkout', async (req, res) => {
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
                         },
-                        unit_amount: 50,
+                        unit_amount: 55,
                     },
                     quantity: 1,
                 },
@@ -41,13 +41,13 @@ app.post('/checkout', async (req, res) => {
             cancel_url: 'http://localhost:5173/cancel',
         });
 
-        // Armazene o session_id no sessionStorage
         res.json({ id: session.id });
-        console.log("Sessão de checkout criada com sucesso");
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create checkout session' });
+        console.error('Erro ao criar sessão de checkout:', error);
+        res.status(500).json({ error: error.message });
     }
 });
+
 
 // Novo endpoint para verificar o status do pagamento
 app.post('/check-payment-status', async (req, res) => {
