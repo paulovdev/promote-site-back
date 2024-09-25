@@ -1,14 +1,15 @@
+// index.cjs
 const express = require('express');
 const Stripe = require('stripe');
 const cors = require('cors');
 
 const app = express();
-const stripe = Stripe("sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg");
+const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg'); // Use a variável de ambiente para a chave secreta
 
 // Middleware CORS
 app.use(cors());
 
-// Middleware para capturar o corpo bruto da requisição
+// Middleware para capturar o corpo bruto da requisição somente para o endpoint do webhook
 app.use(express.json({
   verify: (req, res, buf) => {
     if (req.originalUrl.startsWith('/api/webhook')) {
@@ -18,13 +19,13 @@ app.use(express.json({
 }));
 
 // Endpoint do Webhook
-app.post('/api/webhook', (req, res) => {
+app.post('/api/webhook', async (req, res) => {
   const signature = req.headers['stripe-signature'];
   const rawBody = req.rawBody; // Usa o corpo bruto armazenado
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, "whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy");
+    event = stripe.webhooks.constructEvent(rawBody, signature, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy'); // Use a variável de ambiente para a chave do webhook
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
     return res.status(400).send(`Webhook Error: ${err.message}`);
