@@ -31,7 +31,7 @@ app.post('/checkout', async (req, res) => {
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
                         },
-                        unit_amount: 55,
+                        unit_amount: 5500, // 55 BRL em centavos
                     },
                     quantity: 1,
                 },
@@ -59,7 +59,7 @@ app.post('/check-payment-status', async (req, res) => {
 
     try {
         const session = await stripe.checkout.sessions.retrieve(session_id);
-        const isPaid = session.payment_status === 'paid'; // ou 'complete', dependendo do seu fluxo
+        const isPaid = session.payment_status === 'paid';
 
         res.json({ isPaid });
     } catch (error) {
