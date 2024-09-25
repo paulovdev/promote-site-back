@@ -10,9 +10,8 @@ const stripe = Stripe(
 );
 
 app.use(cors());
+app.use('/api', express.raw({ type: 'application/json' }), webhookRoutes);
 app.use(express.json());
-app.use('/webhook', express.raw({ type: 'application/json' }));
-app.use('/api', webhookRoutes);
 
 app.post('/create-checkout-session', async (req, res) => {
   try {
