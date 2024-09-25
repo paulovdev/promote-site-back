@@ -1,36 +1,45 @@
-// server/server.js
 const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Stripe = require('stripe');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
 app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/create-checkout-session', async (req, res) => {
     try {
+        console.log('Received request to create checkout session');
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: [{
-                price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT', // Certifique-se de que este preço exista no seu Stripe
-                quantity: 1,
-            }],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'Nome do Produto',
+                        },
+                        unit_amount: 2000,
+                    },
+                    quantity: 1,
+                },
+            ],
             mode: 'payment',
-            success_url: `${req.headers.origin}/success`,
-            cancel_url: `${req.headers.origin}/cancel`,
+            success_url: 'http://localhost:5173/success',
+            cancel_url: 'http://localhost:5173/cancel',
         });
 
+        console.log('Checkout session created successfully:', session);
         res.json({ id: session.id });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error creating checkout session:', error.message);
+        res.status(500).json({ error: 'Failed to create checkout session' });
     }
 });
 
-app.get('/', (req, res) => {
-    res.send('Servidor ligado!');
-});
 
+const PORT = process.env.PORT || 4242;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
