@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
     event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy');
   } catch (err) {
     console.error(`Webhook Error: ${err.message}`);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error carai: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
