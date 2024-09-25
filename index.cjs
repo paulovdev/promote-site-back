@@ -18,7 +18,7 @@ app.use(express.json({
 }));
 
 // Endpoint do Webhook
-app.post('/api/webhook', async (req, res) => {
+app.post('/api/webhook', (req, res) => {
   const signature = req.headers['stripe-signature'];
   const rawBody = req.rawBody; // Usa o corpo bruto armazenado
 
