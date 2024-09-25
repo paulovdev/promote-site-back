@@ -1,14 +1,24 @@
 const express = require('express');
 const Stripe = require('stripe');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const webhookRoutes = require('./routes/webhook');
 
 const app = express();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
-// Middleware
+// Use JSON parser for all non-webhook routes
 app.use(cors());
-app.use(express.json()); // Middleware para processar JSON
+app.use((req, res, next) => {
+    if (req.originalUrl === '/api/webhook') {
+        next();
+    } else {
+        bodyParser.json()(req, res, next);
+    }
+});
+
+// Set your webhook secret key (replace with your actual endpoint secret)
+const endpointSecret = 'whsec_...'; // Adicione sua chave secreta aqui
 
 // Usar as rotas do webhook
 app.use('/api/webhook', webhookRoutes); // A rota para o webhook
