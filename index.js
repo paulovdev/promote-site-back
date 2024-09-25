@@ -20,11 +20,17 @@ app.post('/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-         
+            line_items: [
+                {
+                    price: 'price_1Q1xaRRraDIE2N6q9jbVuWXo', // ID do preço do seu produto
+                    quantity: 1, // Quantidade do produto
+                },
+            ],
             mode: 'payment',
             success_url: 'http://localhost:5173/success',
             cancel_url: 'http://localhost:5173/cancel',
         });
+
 
         res.json({ id: session.id });
     } catch (error) {
