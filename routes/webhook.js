@@ -4,7 +4,7 @@ const router = express.Router();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
 // Substitua pela sua chave de webhook
-const endpointSecret = 'whsec_...';
+const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
 
 // Endpoint do Webhook
 router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {

@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 // Set your webhook secret key (replace with your actual endpoint secret)
-const endpointSecret = 'whsec_...'; // Adicione sua chave secreta aqui
+const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy'; // Adicione sua chave secreta aqui
 
 // Usar as rotas do webhook
 app.use('/api/webhook', webhookRoutes); // A rota para o webhook
