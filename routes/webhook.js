@@ -2,7 +2,7 @@
 const express = require('express');
 const Stripe = require('stripe');
 const router = express.Router();
-const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg'); 
+const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
 // Endpoint do Webhook
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -11,7 +11,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(req.body, sig, 'SUA_CHAVE_DE_WEBHOOK'); // Insira sua chave de webhook
+        event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy'); // Insira sua chave de webhook
     } catch (err) {
         console.log(`Webhook Error: ${err.message}`);
         return res.status(400).send(`Webhook Error: ${err.message}`);
