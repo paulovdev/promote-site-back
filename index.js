@@ -12,10 +12,8 @@ app.use('/api/webhook', express.raw({ type: 'application/json' })); // Middlewar
 app.use('/api', webhookRoutes); // Adiciona as rotas do webhook sob /api
 
 // Rota para criar uma sessão de checkout
-app.post('/api/create-checkout-session', async (req, res) => {
+app.post('/create-checkout-session', async (req, res) => {
     try {
-        console.log('Received request to create checkout session');
-
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
@@ -31,19 +29,16 @@ app.post('/api/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: 'http://localhost:3000/success', // Ajuste conforme sua rota de sucesso no React
-            cancel_url: 'http://localhost:3000/cancel', // Ajuste conforme sua rota de cancelamento no React
+            success_url: 'http://localhost:5173/success',
+            cancel_url: 'http://localhost:5173/cancel',
         });
 
-        console.log('Checkout session created successfully:', session);
         res.json({ id: session.id });
     } catch (error) {
-        console.error('Error creating checkout session:', error.message);
-        res.status(500).json({
-            error: 'Failed to create checkout session',
-        });
+        res.status(500).json({ error: 'Failed to create checkout session' });
     }
 });
+
 
 // Inicia o servidor
 const PORT = process.env.PORT || 4242;
