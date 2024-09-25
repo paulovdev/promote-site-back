@@ -1,19 +1,18 @@
 const express = require('express');
 const Stripe = require('stripe');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const webhookRoutes = require('./routes/webhook');
 
 const app = express();
-const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
+const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg'); // Sua chave secreta do Stripe
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Middleware para processar JSON
-app.use('/webhook', express.raw({ type: 'application/json' })); // Middleware para o webhook
+app.use('/api/webhook', express.raw({ type: 'application/json' })); // Middleware para o webhook
 app.use('/api', webhookRoutes); // Adiciona as rotas do webhook sob /api
 
-app.post('/create-checkout-session', async (req, res) => {
+// Rota para criar uma sessão de checkout
+app.post('/api/create-checkout-session', async (req, res) => {
     try {
         console.log('Received request to create checkout session');
 
@@ -32,8 +31,8 @@ app.post('/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: 'http://localhost:5173/success',
-            cancel_url: 'http://localhost:5173/cancel',
+            success_url: 'http://localhost:3000/success', // Ajuste conforme sua rota de sucesso no React
+            cancel_url: 'http://localhost:3000/cancel', // Ajuste conforme sua rota de cancelamento no React
         });
 
         console.log('Checkout session created successfully:', session);
@@ -46,5 +45,6 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 });
 
+// Inicia o servidor
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
