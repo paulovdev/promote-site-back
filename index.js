@@ -1,19 +1,22 @@
 const express = require('express');
 const Stripe = require('stripe');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const webhookRoutes = require('./routes/webhook');
 
 const app = express();
-const stripe = Stripe(
-  'sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg',
-);
+const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
+// Middleware CORS
 app.use(cors());
-app.use('/api', express.raw({ type: 'application/json' }), webhookRoutes);
+
+// Middleware para tratar requisições do webhook como texto cru
+app.use('/api/webhook', express.raw({ type: 'application/json' }), webhookRoutes);
+
+// Middleware para tratar outros tipos de JSON (aplicável em outros endpoints)
 app.use(express.json());
 
-app.post('/create-checkout-session', async (req, res) => {
+// Endpoint para criar sessão de checkout
+app.post('/api/create-checkout-session', async (req, res) => {
   try {
     console.log('Received request to create checkout session');
 
