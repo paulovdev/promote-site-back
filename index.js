@@ -1,16 +1,15 @@
 const express = require('express');
 const Stripe = require('stripe');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const webhookRoutes = require('./routes/webhook');
 
 const app = express();
-const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
+const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg'); // Chave secreta do Stripe
 
 // Middleware
 app.use(cors());
 app.use(express.json()); // Middleware para processar JSON
-app.use('/webhook', express.raw({ type: 'application/json' })); // Middleware para o webhook
+app.use('/api/webhook', express.raw({ type: 'application/json' })); // Middleware para o webhook
 app.use('/api', webhookRoutes); // Adiciona as rotas do webhook sob /api
 
 app.post('/create-checkout-session', async (req, res) => {
