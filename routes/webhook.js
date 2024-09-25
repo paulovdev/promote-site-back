@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
         const sig = req.headers['stripe-signature'];
 
         // Usando o corpo cru do req para construir o evento
-        event = stripe.webhooks.constructEvent(JSON.stringify(req.body), sig, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy');
+        event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy');
     } catch (err) {
         console.error(`Webhook Error: ${err.message}`);
         return res.status(400).send(`Webhook Error: ${err.message}`);
