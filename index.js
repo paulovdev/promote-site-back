@@ -8,10 +8,13 @@ const app = express();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
 // Middleware CORS
-
 app.use(cors());
-app.use('/api/webhook', bodyParser.raw({ type: 'application/json' }), webhookRoutes);
+
+// Middleware para tratar outros tipos de JSON
 app.use(express.json());
+
+// Middleware para tratar requisições do webhook como texto cru
+app.use('/api/webhook', bodyParser.raw({ type: 'application/json' }), webhookRoutes);
 
 // Endpoint para criar sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
