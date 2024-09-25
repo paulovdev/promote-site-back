@@ -10,7 +10,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     let event;
 
     try {
-        // O corpo da requisição deve ser bruto
+        // O corpo da requisição deve ser bruto (não analisado)
         event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy'); // Substitua pela sua chave de webhook
     } catch (err) {
         console.log(`Webhook Error: ${err.message}`);
