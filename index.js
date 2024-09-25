@@ -37,7 +37,7 @@ app.post('/checkout', async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: 'http://localhost:5173/success',
+            success_url: 'http://quimplo.online/success',
             cancel_url: 'http://localhost:5173/cancel',
         });
 
