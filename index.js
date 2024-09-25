@@ -26,13 +26,7 @@ app.post('/checkout', async (req, res) => {
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: 'Nome do Produto',
-                        },
-                        unit_amount: 2000,
-                    },
+                    price: 'price_1Q1xmWRraDIE2N6qBr7I8ukN', // Use seu price_id aqui
                     quantity: 1,
                 },
             ],
