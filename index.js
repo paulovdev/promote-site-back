@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')('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');
+const stripe = require('stripe')("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");
 
-const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
+const endpointSecret = "whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy";
 
 const port = process.env.PORT || 3000;
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -29,8 +30,9 @@ app.post('/checkout', async (req, res) => {
                         currency: 'brl',
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
+                            description: 'Template premium para seu site',
                         },
-                        unit_amount: 50,
+                        unit_amount: 5000,
                     },
                     quantity: 1,
                 },
@@ -40,6 +42,7 @@ app.post('/checkout', async (req, res) => {
             cancel_url: 'http://localhost:5173/cancel',
         });
 
+        console.log('Sessão de checkout criada:', session);
         res.json({ id: session.id });
     } catch (error) {
         console.error('Erro ao criar sessão de checkout:', error);
