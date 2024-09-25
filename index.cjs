@@ -8,19 +8,16 @@ const stripe = Stripe("sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p
 // Middleware CORS
 app.use(cors());
 
-// Middleware para capturar o corpo bruto da requisição
-app.use(express.json({
-  verify: (req, res, buf) => {
-    if (req.originalUrl.startsWith('/api/webhook')) {
-      req.rawBody = buf.toString(); // Armazena o corpo bruto para verificação
-    }
-  },
-}));
+// Middleware para capturar o corpo bruto da requisição apenas para o webhook
+app.use('/api/webhook', express.raw({ type: 'application/json' }));
+
+// Middleware para outros tipos de requisições
+app.use(express.json()); // Isso será usado para outras rotas
 
 // Endpoint do Webhook
 app.post('/api/webhook', async (req, res) => {
   const signature = req.headers['stripe-signature'];
-  const rawBody = req.rawBody; // Usa o corpo bruto armazenado
+  const rawBody = req.body; // O corpo bruto é agora capturado pelo middleware express.raw()
 
   let event;
   try {
@@ -39,6 +36,12 @@ app.post('/api/webhook', async (req, res) => {
 
   // Retornar uma resposta ao Stripe
   res.json({ received: true });
+});
+
+// Outras rotas ou endpoints da API podem ser definidos aqui
+app.post('/api/some-other-endpoint', (req, res) => {
+  // Lógica para outro endpoint
+  res.json({ message: 'This is another endpoint' });
 });
 
 // Iniciar o servidor
