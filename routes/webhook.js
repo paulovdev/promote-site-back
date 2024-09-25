@@ -4,11 +4,13 @@ const router = express.Router();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
 // Substitua pela sua chave de webhook
-const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
+const endpointSecret = 'whsec_...';
 
 // Endpoint do Webhook
 router.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
     const sig = req.headers['stripe-signature'];
+    
+    console.log('Received webhook request:', req.body.toString()); // Log do corpo da requisição
 
     let event;
 

@@ -7,21 +7,13 @@ const webhookRoutes = require('./routes/webhook');
 const app = express();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
-// Use JSON parser for all non-webhook routes
+// Middleware
 app.use(cors());
-app.use((req, res, next) => {
-    if (req.originalUrl === '/api/webhook') {
-        next();
-    } else {
-        bodyParser.json()(req, res, next);
-    }
-});
+app.use(express.json()); // Middleware para processar JSON
 
-// Set your webhook secret key (replace with your actual endpoint secret)
-const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy'; // Adicione sua chave secreta aqui
-
-// Usar as rotas do webhook
-app.use('/api/webhook', webhookRoutes); // A rota para o webhook
+// Middleware específico para o webhook
+app.use('/api/webhook', express.raw({ type: 'application/json' })); // Certifique-se de que o caminho está correto
+app.use('/api', webhookRoutes); // Adiciona as rotas do webhook
 
 // Rota para criar uma sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
@@ -47,6 +39,7 @@ app.post('/create-checkout-session', async (req, res) => {
 
         res.json({ id: session.id });
     } catch (error) {
+        console.error('Error creating checkout session:', error);
         res.status(500).json({ error: 'Failed to create checkout session' });
     }
 });
