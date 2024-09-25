@@ -30,19 +30,17 @@ app.post('/checkout', async (req, res) => {
                         currency: 'brl',
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
-                            description: 'Template premium para seu site',
                         },
-                        unit_amount: 50,
+                        unit_amount: 52,
                     },
                     quantity: 1,
                 },
             ],
             mode: 'payment',
-            success_url: 'http://quimplo.online/success',
+            success_url: 'http://quimplo.online/success?session_id={CHECKOUT_SESSION_ID}',
             cancel_url: 'http://localhost:5173/cancel',
         });
 
-        console.log('Sessão de checkout criada:', session);
         res.json({ id: session.id });
     } catch (error) {
         console.error('Erro ao criar sessão de checkout:', error);
@@ -64,6 +62,7 @@ app.post('/check-payment-status', async (req, res) => {
     }
 });
 
+
 app.post('/webhooks', (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -79,9 +78,11 @@ app.post('/webhooks', (req, res) => {
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         console.log('Pagamento confirmado:', session);
+        // Aqui você pode adicionar lógica adicional, como enviar um e-mail de confirmação
     }
 
     res.json({ received: true });
 });
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
