@@ -8,10 +8,10 @@ const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
 
 const port = 3000;
 
-const paymentLogs = {}; // Armazenamento em memória dos logs de pagamento
-
+// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// parse application/json
 app.use(bodyParser.json({
     verify: (req, res, buf) => {
         req.rawBody = buf;
@@ -31,7 +31,7 @@ app.post('/checkout', async (req, res) => {
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
                         },
-                        unit_amount: 55, // 55 BRL em centavos
+                        unit_amount: 55,
                     },
                     quantity: 1,
                 },
@@ -41,12 +41,6 @@ app.post('/checkout', async (req, res) => {
             cancel_url: 'http://localhost:5173/cancel',
         });
 
-        // Inicialize o log de pagamento
-        paymentLogs[session.id] = {
-            status: 'created',
-            session: session
-        };
-
         res.json({ id: session.id });
     } catch (error) {
         console.error('Erro ao criar sessão de checkout:', error);
@@ -54,12 +48,14 @@ app.post('/checkout', async (req, res) => {
     }
 });
 
+
+// Novo endpoint para verificar o status do pagamento
 app.post('/check-payment-status', async (req, res) => {
     const { session_id } = req.body;
 
     try {
         const session = await stripe.checkout.sessions.retrieve(session_id);
-        const isPaid = session.payment_status === 'paid';
+        const isPaid = session.payment_status === 'paid'; // ou 'complete', dependendo do seu fluxo
 
         res.json({ isPaid });
     } catch (error) {
@@ -68,6 +64,7 @@ app.post('/check-payment-status', async (req, res) => {
     }
 });
 
+
 app.post('/webhooks', (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -75,32 +72,16 @@ app.post('/webhooks', (req, res) => {
     try {
         event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
     } catch (err) {
-        console.error(`Erro de Webhook: ${err.message}`);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     // Handle the event
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-        paymentLogs[session.id] = {
-            status: 'completed',
-            session: session
-        };
         console.log('Pagamento confirmado:', session);
     }
 
     res.json({ received: true });
-});
-
-// Endpoint para buscar logs de pagamento
-app.get('/payment-logs/:session_id', (req, res) => {
-    const { session_id } = req.params;
-    const log = paymentLogs[session_id];
-    if (log) {
-        res.json(log);
-    } else {
-        res.status(404).json({ error: 'Log de pagamento não encontrado' });
-    }
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
