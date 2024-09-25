@@ -13,8 +13,7 @@ app.use(cors());
 // Define o middleware para o endpoint do webhook
 app.use('/webhook', express.raw({ type: 'application/json' }));
 
-// Middleware para processar JSON (antes do webhook)
-app.use(express.json());
+
 
 app.use('/api', webhookRoutes);
 
@@ -27,10 +26,8 @@ app.post('/create-checkout-session', async (req, res) => {
             line_items: [
                 {
                     price_data: {
-                        currency:
-                            'usd',
-                        product_data:
-                        {
+                        currency: 'usd',
+                        product_data: {
                             name: 'Nome do Produto',
                         },
                         unit_amount: 2000,
@@ -47,12 +44,11 @@ app.post('/create-checkout-session', async (req, res) => {
         res.json({ id: session.id });
     } catch (error) {
         console.error('Error creating checkout session:', error.message);
-        res.status(500).json({
-            error:
-                'Failed to create checkout session'
-        });
+        res.status(500).json({ error: 'Failed to create checkout session' });
     }
 });
 
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Middleware para processar JSON
+app.use(express.json());
