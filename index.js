@@ -31,7 +31,7 @@ app.post('/checkout', async (req, res) => {
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
                         },
-                        unit_amount: 100,
+                        unit_amount: 1000,
                     },
                     quantity: 1,
                 },
