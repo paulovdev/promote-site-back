@@ -26,7 +26,13 @@ app.post('/checkout', async (req, res) => {
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: { id: 'price_1Q1xmWRraDIE2N6qBr7I8ukN' }, // Use seu price_id aqui
+                    price_data: {
+                        currency: 'brl',
+                        product_data: {
+                            name: 'Preço de Quimplo - Template Pass',
+                        },
+                        unit_amount: 50,
+                    },
                     quantity: 1,
                 },
             ],
