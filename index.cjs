@@ -21,6 +21,7 @@ app.post('/api/webhook', async (req, res) => {
 
   let event;
   try {
+    // Aqui, estamos usando o corpo bruto
     event = stripe.webhooks.constructEvent(rawBody, signature, "whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy"); // Use a variável de ambiente para a chave do webhook
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
