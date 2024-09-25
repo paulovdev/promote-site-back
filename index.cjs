@@ -13,8 +13,7 @@ app.use(cors());
 // Define o middleware para o endpoint do webhook
 app.use('/webhook', express.raw({ type: 'application/json' }));
 
-// Middleware para processar JSON
-app.use(express.json());
+
 
 app.use('/api', webhookRoutes);
 
@@ -51,3 +50,5 @@ app.post('/create-checkout-session', async (req, res) => {
 
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Middleware para processar JSON
+app.use(express.json());
