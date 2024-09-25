@@ -1,6 +1,5 @@
 const express = require('express');
 const Stripe = require('stripe');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const webhookRoutes = require('./routes/webhook');
 
@@ -11,9 +10,8 @@ const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p
 app.use(cors());
 app.use(express.json()); // Middleware para processar JSON
 
-// Middleware específico para o webhook
-app.use('/api/webhook', express.raw({ type: 'application/json' })); // Certifique-se de que o caminho está correto
-app.use('/api', webhookRoutes); // Adiciona as rotas do webhook
+// Usar as rotas do webhook
+app.use('/api/webhook', webhookRoutes); // A rota para o webhook
 
 // Rota para criar uma sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
@@ -42,7 +40,6 @@ app.post('/create-checkout-session', async (req, res) => {
         res.status(500).json({ error: 'Failed to create checkout session' });
     }
 });
-
 
 // Inicia o servidor
 const PORT = process.env.PORT || 4242;
