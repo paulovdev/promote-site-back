@@ -1,19 +1,20 @@
 const express = require('express');
 const Stripe = require('stripe');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const webhookRoutes = require('./routes/webhook');
 
 const app = express();
 const stripe = Stripe('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
+// Middleware CORS
+app.use(cors());
+
 // Middleware para tratar outros tipos de JSON
 app.use(express.json());
 
-// Middleware CORS  
-app.use(cors());
-
 // Middleware para tratar requisições do webhook como texto cru
-app.use('/api/webhook', express.raw({ type: 'application/json' }), webhookRoutes);
+app.use('/api/webhook', bodyParser.raw({ type: 'application/json' }), webhookRoutes);
 
 // Endpoint para criar sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
