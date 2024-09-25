@@ -14,7 +14,6 @@ app.use(cors());
 app.use(express.json());
 
 // Middleware para tratar requisições do webhook como texto cru
-app.use('/api/webhook', bodyParser.raw({ type: 'application/json' }), webhookRoutes);
 
 // Endpoint para criar sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
@@ -49,6 +48,7 @@ app.post('/create-checkout-session', async (req, res) => {
         });
     }
 });
+app.use('/api/webhook', bodyParser.raw({ type: 'application/json' }), webhookRoutes);
 
 const PORT = process.env.PORT || 4242;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
