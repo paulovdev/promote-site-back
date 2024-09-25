@@ -6,8 +6,7 @@ const stripe = require('stripe')('sk_live_51Q1x2cRraDIE2N6q80A148T8k2ypafRbKuI0k
 
 const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
 
-const port = 3000;
-
+const port = process.env.PORT || 3000;
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -48,14 +47,12 @@ app.post('/checkout', async (req, res) => {
     }
 });
 
-
-// Novo endpoint para verificar o status do pagamento
 app.post('/check-payment-status', async (req, res) => {
     const { session_id } = req.body;
 
     try {
         const session = await stripe.checkout.sessions.retrieve(session_id);
-        const isPaid = session.payment_status === 'paid'; // ou 'complete', dependendo do seu fluxo
+        const isPaid = session.payment_status === 'paid';
 
         res.json({ isPaid });
     } catch (error) {
@@ -64,7 +61,6 @@ app.post('/check-payment-status', async (req, res) => {
     }
 });
 
-
 app.post('/webhooks', (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -72,6 +68,7 @@ app.post('/webhooks', (req, res) => {
     try {
         event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
     } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
