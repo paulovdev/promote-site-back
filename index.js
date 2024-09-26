@@ -18,7 +18,7 @@ app.use(bodyParser.json({
 }));
 
 // Create Checkout Session
-app.post('/create-checkout-session', async (req, res) => {
+app.post('/checkout', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -47,7 +47,7 @@ app.post('/create-checkout-session', async (req, res) => {
 });
 
 // Check Payment Status
-app.post('/check-payment-status', async (req, res) => {
+app.post('/payment', async (req, res) => {
     const { session_id } = req.body;
 
     try {
