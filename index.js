@@ -2,46 +2,87 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mercadopago = require('mercadopago');
+const stripe = require('stripe')("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");
 
-mercadopago.configure({
-    access_token: 'APP_USR-8159512654439925-092520-95d69b3eb71e8761564ab61c7142ff90-1173126623' // Substitua pelo seu Access Token
-});
+const endpointSecret = "whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy";
 
 const port = process.env.PORT || 3000;
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
 // parse application/json
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
+
 app.use(cors());
 
 app.post('/checkout', async (req, res) => {
-    const { siteName, description, price } = req.body; // Extraia informações do corpo da requisição
-
-    const preference = {
-        items: [
-            {
-                title: siteName,
-                description: description,
-                quantity: 1,
-                currency_id: 'BRL',
-                unit_price: price,
-            }
-        ],
-        back_urls: {
-            success: 'http://quimplo.online/success',
-            failure: 'http://localhost:5173/cancel',
-            pending: 'http://localhost:5173/pending',
-        },
-        auto_return: 'approved',
-    };
-
     try {
-        const response = await mercadopago.preferences.create(preference);
-        res.json({ init_point: response.body.init_point });
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'brl',
+                        product_data: {
+                            name: 'Preço de Quimplo - Template Pass',
+                        },
+                        unit_amount: 52,
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            success_url: 'http://quimplo.online/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url: 'http://localhost:5173/cancel',
+        });
+
+        res.json({ id: session.id });
     } catch (error) {
-        console.error('Erro ao criar preferência:', error);
+        console.error('Erro ao criar sessão de checkout:', error);
         res.status(500).json({ error: error.message });
     }
 });
+
+app.post('/check-payment-status', async (req, res) => {
+    const { session_id } = req.body;
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(session_id);
+        const isPaid = session.payment_status === 'paid';
+
+        res.json({ isPaid });
+    } catch (error) {
+        console.error("Erro ao verificar o status do pagamento:", error);
+        res.status(500).json({ error: 'Erro ao verificar o status do pagamento' });
+    }
+});
+
+
+app.post('/webhooks', (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+    } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        console.log('Pagamento confirmado:', session);
+        // Aqui você pode adicionar lógica adicional, como enviar um e-mail de confirmação
+    }
+
+    res.json({ received: true });
+});
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
