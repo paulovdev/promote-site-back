@@ -2,25 +2,23 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')("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");
+const stripe = require('stripe')('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
 
-const endpointSecret = "whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy";
-
+const endpointSecret = 'whsec_jqLnO8OzKJYeYaHrh1W7O2GDvMUNbPyf';
 const port = process.env.PORT || 3000;
 
-// parse application/x-www-form-urlencoded
+// Middleware
+app.use(cors());
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
-
-// parse application/json
 app.use(bodyParser.json({
     verify: (req, res, buf) => {
         req.rawBody = buf;
     }
 }));
 
-app.use(cors());
-
-app.post('/checkout', async (req, res) => {
+// Create Checkout Session
+app.post('/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -31,7 +29,7 @@ app.post('/checkout', async (req, res) => {
                         product_data: {
                             name: 'Preço de Quimplo - Template Pass',
                         },
-                        unit_amount: 52,
+                        unit_amount: 50, // 52 BRL in cents
                     },
                     quantity: 1,
                 },
@@ -48,6 +46,7 @@ app.post('/checkout', async (req, res) => {
     }
 });
 
+// Check Payment Status
 app.post('/check-payment-status', async (req, res) => {
     const { session_id } = req.body;
 
@@ -57,12 +56,12 @@ app.post('/check-payment-status', async (req, res) => {
 
         res.json({ isPaid });
     } catch (error) {
-        console.error("Erro ao verificar o status do pagamento:", error);
+        console.error('Erro ao verificar o status do pagamento:', error);
         res.status(500).json({ error: 'Erro ao verificar o status do pagamento' });
     }
 });
 
-
+// Webhooks
 app.post('/webhooks', (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -74,15 +73,13 @@ app.post('/webhooks', (req, res) => {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Handle the event
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         console.log('Pagamento confirmado:', session);
-        // Aqui você pode adicionar lógica adicional, como enviar um e-mail de confirmação
+        // Add additional logic such as sending a confirmation email here
     }
 
     res.json({ received: true });
 });
-
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
