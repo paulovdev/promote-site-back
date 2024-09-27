@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')('sk_test_51Q1x2cRraDIE2N6qLbzeQgMBnW5xSG7gCB6W3tMxCfEWUz8p7vhjnjCAPXHkT2Kr50i6rgAC646BmqglaGWp5dhd00SZi9vWQg');
+const stripe = require('stripe')('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');
 
 const app = express();
 const endpointSecret = 'whsec_jqLnO8OzKJYeYaHrh1W7O2GDvMUNbPyf';
@@ -18,7 +18,7 @@ app.post('/create-checkout-session', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
-                    price: 'price_1Q1ylSRraDIE2N6q1CPEIbBT',
+                    price: 'price_1Q1xmWRraDIE2N6qBr7I8ukN',
                     quantity: 1,
                 },
             ],
