@@ -10,7 +10,7 @@ app.use(cors());
 
 app.use(bodyParser.raw({ type: 'application/json' }));
 
-const YOUR_DOMAIN = 'http://localhost:5173';
+const YOUR_DOMAIN = 'https://quimplo.online';
 app.use(express.json());
 // Criar sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
