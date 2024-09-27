@@ -7,11 +7,11 @@ const app = express();
 const endpointSecret = 'whsec_jqLnO8OzKJYeYaHrh1W7O2GDvMUNbPyf';
 
 app.use(cors());
-app.use(express.json());
+
 app.use(bodyParser.raw({ type: 'application/json' }));
 
 const YOUR_DOMAIN = 'http://localhost:5173';
-
+app.use(express.json());
 // Criar sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
     try {
