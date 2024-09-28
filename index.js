@@ -74,8 +74,28 @@ app.post('/webhook', async (request, response) => {
         await fulfillCheckout(event.data.object.id);
     }
 
+    switch (event.type) {
+        case 'payment_intent.succeeded':
+            const paymentIntent = event.data.object;
+            console.log('PaymentIntent was successful!');
+            break;
+        case 'payment_intent.payment_failed':
+            const paymentFailedIntent = event.data.object;
+            console.log('PaymentIntent failed:', paymentFailedIntent.last_payment_error.message);
+            // Aqui você pode adicionar lógica adicional para notificar o usuário ou registrar a falha.
+            break;
+        case 'charge.failed':
+            const chargeFailed = event.data.object;
+            console.log('Charge failed:', chargeFailed.failure_message);
+            // Aqui você pode adicionar lógica para lidar com a falha de cobrança.
+            break;
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+
     response.status(200).end();
 });
+
 
 app.get('/check-payment-status', async (req, res) => {
     const { session_id } = req.query;
