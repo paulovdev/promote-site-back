@@ -19,7 +19,7 @@ app.post('/create-checkout-session', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
-                    price: 'price_1Q1xmWRraDIE2N6qBr7I8ukN',
+                    price: 'price_1Q1xGgRraDIE2N6qGDLn8Nwr',
                     quantity: 1,
                 },
             ],
