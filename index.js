@@ -28,7 +28,7 @@ app.post('/create-checkout-session', async (req, res) => {
             cancel_url: `${YOUR_DOMAIN}?canceled=true`,
         });
 
-        res.json({ url: session.url });
+        res.json({ id: session.id });
     } catch (error) {
         console.error('Error creating checkout session:', error);
         res.status(500).send('Internal Server Error');
@@ -46,10 +46,6 @@ async function fulfillCheckout(sessionId) {
 
     // Verificar se o pagamento foi concluído
     if (checkoutSession.payment_status === 'paid') {
-        // TODO: Realizar o atendimento dos itens de linha
-        // Exemplo: Enviar um e-mail, atualizar inventário, etc.
-
-        // Logar o status do atendimento
         console.log(`Checkout Session ${sessionId} fulfilled.`);
     } else {
         console.log(`Checkout Session ${sessionId} not fulfilled because payment is not completed.`);
@@ -94,19 +90,6 @@ app.post('/webhook', async (request, response) => {
     }
 
     response.status(200).end();
-});
-
-
-app.get('/check-payment-status', async (req, res) => {
-    const { session_id } = req.query;
-
-    try {
-        const session = await stripe.checkout.sessions.retrieve(session_id);
-        res.json({ status: session.payment_status });
-    } catch (error) {
-        console.error('Error retrieving checkout session:', error);
-        res.status(500).send('Internal Server Error');
-    }
 });
 
 
