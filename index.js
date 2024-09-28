@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')('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');
+const stripe = require('stripe')('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');
 
 const app = express();
-const endpointSecret = 'whsec_N6aHbwFpbJ9y0p2FdrUVOOq1PGCjZtic';
+const endpointSecret = 'whsec_fflHYnGsltO55GQTlPT9HWOssiVKehQy';
 const YOUR_DOMAIN = 'https://quimplo.online';
 
 app.use(cors());
@@ -19,7 +19,7 @@ app.post('/create-checkout-session', async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
-                    price: 'price_1Q3yQTFQSsXyaRCdJZjMxU9Y',
+                    price: 'price_1Q1xmWRraDIE2N6qBr7I8ukN',
                     quantity: 1,
                 },
             ],
