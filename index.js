@@ -28,7 +28,7 @@ app.post('/create-checkout-session', async (req, res) => {
             cancel_url: `${YOUR_DOMAIN}?canceled=true`,
         });
 
-        res.json({ id: session.id });
+        res.redirect(303, session.url);
     } catch (error) {
         console.error('Error creating checkout session:', error);
         res.status(500).send('Internal Server Error');
