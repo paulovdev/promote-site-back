@@ -31,7 +31,7 @@ app.post('/create-checkout-session', async (req, res) => {
         res.json({ url: session.url });
     } catch (error) {
         console.error('Error creating checkout session:', error);
-        res.status(500).send('Inrternal Server Erro:' error);
+        res.status(500).send('Inrternal Server Erro:', error);
     }
 });
 
