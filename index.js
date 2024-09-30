@@ -8,11 +8,9 @@ const endpointSecret = 'whsec_N6aHbwFpbJ9y0p2FdrUVOOq1PGCjZtic';
 const YOUR_DOMAIN = 'https://quimplo.online';
 
 app.use(cors());
-
 app.use(bodyParser.raw({ type: 'application/json' }));
-
-
 app.use(express.json());
+
 // Criar sessão de checkout
 app.post('/create-checkout-session', async (req, res) => {
     try {
@@ -31,7 +29,20 @@ app.post('/create-checkout-session', async (req, res) => {
         res.json({ url: session.url });
     } catch (error) {
         console.error('Error creating checkout session:', error);
-        res.status(500).send('Inrternal Server Erro:', error);
+        res.status(500).send('Internal Server Error:', error);
+    }
+});
+
+// Endpoint para verificar o status do pagamento
+app.get('/check-payment-status', async (req, res) => {
+    const sessionId = req.query.session_id;
+
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        res.json({ status: session.payment_status });
+    } catch (error) {
+        console.error('Error retrieving checkout session:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -76,7 +87,5 @@ app.post('/webhook', async (request, response) => {
 
     response.status(200).end();
 });
-
-
 
 app.listen(4242, () => console.log('Running on port 4242'));
